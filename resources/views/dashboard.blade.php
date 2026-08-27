@@ -1,0 +1,23 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="dashboard-heading">
+            <div><p class="eyebrow">Thursday, August 27, 2026</p><h1>Good morning, {{ explode(' ', Auth::user()->name)[0] }}.</h1><p>Here is the pulse of your agreement workspace.</p></div>
+            <button type="button" class="view-switcher" @click="navMode = navMode === 'sidebar' ? 'top' : 'sidebar'"><span class="view-switcher__icon">&#8644;</span><span x-text="navMode === 'sidebar' ? 'Use top navbar' : 'Use sidebar'">Use top navbar</span></button>
+        </div>
+    </x-slot>
+
+    <div class="dashboard-page">
+        <div class="dashboard-toolbar"><div><span class="section-kicker">Workspace overview</span><h2>Agreement control center</h2></div><a href="#agreements" class="primary-action"><span>+</span> New agreement</a></div>
+        <section class="metrics-grid" aria-label="Agreement summary">
+            <article class="metric-card metric-card--blue"><span class="metric-card__mark">&#9776;</span><p>Total agreements</p><strong>128</strong><small><b>+12%</b> from last month</small></article>
+            <article class="metric-card metric-card--green"><span class="metric-card__mark">&#10003;</span><p>Active agreements</p><strong>86</strong><small><b>+8%</b> from last month</small></article>
+            <article class="metric-card metric-card--amber"><span class="metric-card__mark">&#9673;</span><p>Expiring soon</p><strong>12</strong><small><b>3</b> within 30 days</small></article>
+            <article class="metric-card metric-card--rose"><span class="metric-card__mark">&#9888;</span><p>Awaiting signature</p><strong>07</strong><small><b>2</b> need your attention</small></article>
+        </section>
+        <section class="dashboard-grid">
+            <article class="panel panel--wide" id="agreements"><div class="panel-heading"><div><span class="section-kicker">Portfolio</span><h2>Agreement activity</h2></div><a href="#agreements">View all <span>&rarr;</span></a></div><div class="chart-wrap"><div class="chart-y-axis"><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span></div><div class="chart"><div class="chart-grid-lines"></div><div class="chart-bars"><i style="height: 42%"></i><i style="height: 58%"></i><i style="height: 48%"></i><i style="height: 76%"></i><i style="height: 65%"></i><i style="height: 88%"></i><i style="height: 72%"></i><i style="height: 94%"></i><i style="height: 82%"></i><i style="height: 68%"></i><i style="height: 86%"></i><i style="height: 78%"></i></div><div class="chart-x-axis"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div></div></div></article>
+            <article class="panel" id="deadlines"><div class="panel-heading"><div><span class="section-kicker">Attention</span><h2>Upcoming deadlines</h2></div><a href="#deadlines">See all <span>&rarr;</span></a></div><div class="deadline-list"><div class="deadline-item"><span class="deadline-date">04<span>SEP</span></span><span><strong>Vendor Service Agreement</strong><small>Legal review</small></span><b class="status status--amber">Review</b></div><div class="deadline-item"><span class="deadline-date">11<span>SEP</span></span><span><strong>Q3 Partnership Contract</strong><small>Signature required</small></span><b class="status status--rose">Urgent</b></div><div class="deadline-item"><span class="deadline-date">18<span>SEP</span></span><span><strong>Office Lease Renewal</strong><small>Finance approval</small></span><b class="status status--green">On track</b></div></div></article>
+        </section>
+        <section class="panel recent-panel" id="activity"><div class="panel-heading"><div><span class="section-kicker">Latest updates</span><h2>Recent activity</h2></div><a href="#activity">Activity log <span>&rarr;</span></a></div><div class="activity-list"><div><span class="activity-avatar activity-avatar--blue">AM</span><p><strong>Alex Morgan</strong> created <b>Marketing Retainer 2026</b><small>Today, 09:42 AM</small></p><span class="activity-tag">Created</span></div><div><span class="activity-avatar activity-avatar--green">JD</span><p><strong>Jordan Davis</strong> signed <b>Cloud Hosting Agreement</b><small>Yesterday, 04:18 PM</small></p><span class="activity-tag activity-tag--green">Signed</span></div><div><span class="activity-avatar activity-avatar--amber">LS</span><p><strong>Lee Santos</strong> requested changes to <b>Office Lease Renewal</b><small>Yesterday, 11:06 AM</small></p><span class="activity-tag activity-tag--amber">Review</span></div></div></section>
+    </div>
+</x-app-layout>
