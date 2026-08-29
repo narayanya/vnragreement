@@ -2,6 +2,190 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────
+   BOOTSTRAP THEME OVERRIDES  — matches the dashboard palette
+   Primary  : #187b78  (teal)
+   Ink      : #172b4d  (navy)
+   Muted    : #71809a
+   Border   : #e7ebf2
+   Bg       : #f6f8fb
+───────────────────────────────────────────────────────────── */
+
+/* CSS custom properties exposed to Bootstrap */
+:root {
+  --bs-primary:              #187b78;
+  --bs-primary-rgb:          24, 123, 120;
+  --bs-primary-bg-subtle:    #e6f4f3;
+  --bs-primary-border-subtle:#b3dedd;
+  --bs-link-color:           #187b78;
+  --bs-link-hover-color:     #115c5a;
+  --bs-body-font-family:     'Figtree', system-ui, sans-serif;
+  --bs-body-font-size:       0.875rem;   /* 14 px */
+  --bs-body-color:           #172b4d;
+  --bs-body-bg:              #f6f8fb;
+  --bs-border-color:         #e7ebf2;
+  --bs-border-radius:        0.45rem;
+  --bs-border-radius-sm:     0.3rem;
+  --bs-border-radius-lg:     0.6rem;
+  --bs-card-border-color:    #e7ebf2;
+  --bs-card-bg:              #ffffff;
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.btn-primary {
+  --bs-btn-bg:               #187b78;
+  --bs-btn-border-color:     #187b78;
+  --bs-btn-hover-bg:         #115c5a;
+  --bs-btn-hover-border-color:#115c5a;
+  --bs-btn-active-bg:        #0e4d4b;
+  --bs-btn-active-border-color:#0e4d4b;
+  --bs-btn-focus-shadow-rgb: 24, 123, 120;
+  font-weight: 600;
+}
+.btn-outline-primary {
+  --bs-btn-color:            #187b78;
+  --bs-btn-border-color:     #187b78;
+  --bs-btn-hover-bg:         #187b78;
+  --bs-btn-hover-border-color:#187b78;
+  --bs-btn-active-bg:        #115c5a;
+}
+.btn-sm { font-size: 0.78rem; padding: 0.3rem 0.65rem; }
+.btn { border-radius: 6px; }
+
+/* ── Cards ──────────────────────────────────────────────────── */
+.card {
+  border: 1px solid #e7ebf2;
+  border-radius: 9px;
+  box-shadow: 0 1px 4px rgba(23,43,77,.05);
+}
+.card-footer {
+  background: #fff;
+  border-top: 1px solid #e7ebf2;
+  font-size: 0.78rem;
+}
+
+/* ── Table ──────────────────────────────────────────────────── */
+.table { font-size: 0.8375rem; color: #172b4d; }
+.table thead th {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.55px;
+  text-transform: uppercase;
+  color: #71809a;
+  background: #f6f8fb;
+  border-bottom: 1px solid #e7ebf2;
+  white-space: nowrap;
+}
+.table-hover tbody tr:hover { background-color: #f0f7f7; }
+.table > :not(caption) > * > * { padding: 0.6rem 0.75rem; }
+
+/* ── Badges ─────────────────────────────────────────────────── */
+.badge { font-size: 0.7rem; font-weight: 600; border-radius: 4px; padding: 0.28em 0.55em; }
+.badge.bg-primary   { background-color: #187b78 !important; }
+.badge.bg-info      { background-color: #2d8dc4 !important; color: #fff !important; }
+.badge.bg-success   { background-color: #1e8c6a !important; }
+.badge.bg-danger    { background-color: #c94f5a !important; }
+.badge.bg-secondary { background-color: #5a6d86 !important; }
+.badge.bg-warning   { background-color: #d48f1a !important; color: #fff !important; }
+
+/* ── Form controls ──────────────────────────────────────────── */
+.form-control, .form-select {
+  font-size: 0.84rem;
+  border-color: #d4dbe8;
+  border-radius: 6px;
+  color: #172b4d;
+}
+.form-control:focus, .form-select:focus {
+  border-color: #187b78;
+  box-shadow: 0 0 0 3px rgba(24,123,120,.15);
+}
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #3d5068;
+  margin-bottom: 0.3rem;
+}
+.input-group-text {
+  border-color: #d4dbe8;
+  background: #fff;
+  color: #71809a;
+}
+
+/* ── Modal ──────────────────────────────────────────────────── */
+.modal-header {
+  background: #f6f8fb;
+  border-bottom: 1px solid #e7ebf2;
+  padding: 0.9rem 1.25rem;
+}
+.modal-title { font-size: 0.95rem; font-weight: 700; color: #172b4d; }
+.modal-footer { border-top: 1px solid #e7ebf2; background: #fafbfd; }
+.modal-content { border: 1px solid #dce3ef; border-radius: 10px; }
+
+/* ── Nav tabs (inside modals) ───────────────────────────────── */
+.nav-tabs .nav-link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #71809a;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0;
+}
+.nav-tabs .nav-link:hover  { color: #187b78; border-bottom-color: #b3dedd; }
+.nav-tabs .nav-link.active { color: #187b78; border-bottom-color: #187b78; background: transparent; }
+.nav-tabs { border-bottom: 1px solid #e7ebf2; }
+
+/* ── Alerts ─────────────────────────────────────────────────── */
+.alert { font-size: 0.84rem; border-radius: 8px; }
+.alert-success { background: #eaf7f2; border-color: #b2e4d4; color: #17664d; }
+.alert-danger  { background: #fdf0f1; border-color: #f4bdc1; color: #8f2e37; }
+
+/* ── Page header shared component ──────────────────────────── */
+.page-header-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e7ebf2;
+}
+.page-header-block__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #172b4d;
+  margin: 0;
+  letter-spacing: -.2px;
+}
+.page-header-block__sub {
+  font-size: 0.78rem;
+  color: #71809a;
+  margin: 2px 0 0;
+}
+
+/* ── Search card ────────────────────────────────────────────── */
+.search-card {
+  background: #fff;
+  border: 1px solid #e7ebf2;
+  border-radius: 9px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(23,43,77,.04);
+}
+
+/* ── Pagination ─────────────────────────────────────────────── */
+.pagination .page-link {
+  font-size: 0.78rem;
+  color: #3d5068;
+  border-color: #e7ebf2;
+}
+.pagination .page-link:hover  { background: #eaf7f2; color: #187b78; }
+.pagination .page-item.active .page-link {
+  background-color: #187b78;
+  border-color: #187b78;
+}
+
 @layer base {
 	body {
 		margin: 0;
@@ -65,6 +249,7 @@
 	.master-subnav { display: grid; gap: 2px; margin: -2px 0 5px 44px; padding-left: 13px; border-left: 1px solid #3b5578; }
 	.master-subnav a { padding: 7px 8px; color: #91a6c4; font-size: 11px; text-decoration: none; }
 	.master-subnav a:hover { color: #fff; }
+	.master-subnav a.is-active { color: #60cdb9; font-weight: 700; }
 	.nav-icon { width: 18px; color: #70d5c0; font-size: 16px; text-align: center; }
 	.nav-count { margin-left: auto; min-width: 22px; padding: 3px 6px; border-radius: 10px; background: #385d88; color: #cfe1f8; font-size: 10px; text-align: center; }
 	.nav-count--warm { background: #7a6041; color: #ffe5b5; }

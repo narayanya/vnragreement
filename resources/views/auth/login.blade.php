@@ -207,7 +207,7 @@
         }
 
         .description {
-            max-width: 490px;
+            max-width: 415px;
             color: #536a90;
             font-size: 17px;
             line-height: 1.7;
@@ -275,7 +275,7 @@
         .agreement-illustration {
             position: absolute;
             left: 45%;
-            top: 42%;
+            top: 53%;
             width: 390px;
             height: 390px;
             transform: translate(-50%, -50%) rotate(-4deg);
@@ -442,8 +442,8 @@
 
         .login-card {
             width: 555px;
-            min-height: 875px;
-            padding: 42px 50px;
+            min-height: 600px;
+            padding: 30px 40px;
             background: rgba(255, 255, 255, .96);
             border-radius: 28px;
             box-shadow:
@@ -506,7 +506,7 @@
 
         .form-control-custom {
             width: 100%;
-            height: 66px;
+            height: 45px;
             border: 1px solid #cad6e7;
             border-radius: 12px;
             padding: 0 55px;
@@ -570,7 +570,7 @@
 
         .btn-login {
             width: 100%;
-            height: 67px;
+            height: 55px;
             border: 0;
             border-radius: 12px;
             background: linear-gradient(90deg, #2879eb, #3177e8);
@@ -663,13 +663,13 @@
             }
 
             .agreement-illustration {
-                left: 31%;
+                left: 45%;
                 transform: translate(-50%, -50%) scale(.82) rotate(-4deg);
             }
 
             .login-card {
                 width: 500px;
-                min-height: 820px;
+                min-height: 600px;
             }
         }
 
@@ -1094,13 +1094,13 @@
 
 
                     <!-- OR -->
-                    <div class="or-divider">
+                    <div class="or-divider" style="display:none;">
                         <span>OR</span>
                     </div>
 
 
                     <!-- SSO -->
-                    <button
+                    <button style="display:none;"
                         type="button"
                         class="btn-sso"
                     >
