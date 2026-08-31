@@ -1,4 +1,12 @@
-<div x-data="{ open: false, coreMasterOpen: false, masterOpen: false, verifyProductionOpen: false, formMasterOpen: false, locationMasterOpen: false, settingOpen: false }" class="navigation-shell">
+<div x-data="{
+    open: false,
+    coreMasterOpen: {{ request()->routeIs('core.api.index','core.location.index','crops.index','master.employees.index') ? 'true' : 'false' }},
+    masterOpen: {{ request()->routeIs('master.farmers.index', 'seasons.index', 'master.organiser.index') ? 'true' : 'false' }},
+    verifyProductionOpen: false,
+    formMasterOpen: false,
+    locationMasterOpen: false,
+    settingOpen: false
+}" class="navigation-shell">
     <aside class="sidebar-nav" aria-label="Sidebar navigation">
         <a href="{{ route('dashboard') }}" class="brand-mark">
             <x-application-logo class="brand-mark__logo" />
@@ -11,19 +19,20 @@
 
             <button type="button" class="dashboard-nav-link master-nav-link" @click="coreMasterOpen = !coreMasterOpen" :aria-expanded="coreMasterOpen.toString()"><span class="nav-icon">&#9673;</span><span>Core Master</span><span class="nav-chevron" :class="{ 'is-open': coreMasterOpen }">&#8964;</span></button>
             <div class="master-subnav" x-show="coreMasterOpen" x-transition>
-                <a href="{{ route('core.api.index') }}" class="{{ request()->routeIs('core.api.index') ? 'is-active' : '' }}">Core API</a>
-                <a href="{{ route('crops.index') }}" class="{{ request()->routeIs('crops.index') ? 'is-active' : '' }}">Crop</a>
-                <a href="#master-organizer">Vertical</a>
-                <a href="#master-company">Variety</a>
-                <a href="#master-company">Company</a>
-                <a href="#master-employee">Employee</a>
+                <a href="{{ route('core.api.index') }}"        class="{{ request()->routeIs('core.api.index')        ? 'is-active' : '' }}">Core API</a>
+                <a href="{{ route('crops.index') }}"           class="{{ request()->routeIs('crops.index')           ? 'is-active' : '' }}">Crop</a>
+                <a href="{{ route('master.employees.index') }}" class="{{ request()->routeIs('master.employees.index') ? 'is-active' : '' }}">Employee</a>
+                <a href="">Vertical</a>
+                <a href="{{ route('master.variety.index') }}" class="{{ request()->routeIs('master.variety.index') ? 'is-active' : '' }}">Variety</a>
+                <a href="{{ route('core.location.index') }}" class="{{ request()->routeIs('core.location.index') ? 'is-active' : '' }}">Core Location</a>
+                <a href="{{ route('master.company.index') }}" class="{{ request()->routeIs('master.company.index') ? 'is-active' : '' }}">Company</a>
             </div>
             <button type="button" class="dashboard-nav-link master-nav-link" @click="masterOpen = !masterOpen" :aria-expanded="masterOpen.toString()"><span class="nav-icon">&#9673;</span><span>Master</span><span class="nav-chevron" :class="{ 'is-open': masterOpen }">&#8964;</span></button>
             <div class="master-subnav" x-show="masterOpen" x-transition>
-                <a href="#master-formar">Formar</a>
-                <a href="#master-organizer">Organizer</a>
-                <a href="#master-season">Season</a>
-                <a href="#master-employee-type">Contamination</a>
+                <a href="{{ route('master.farmers.index') }}" class="{{ request()->routeIs('master.farmers.index') ? 'is-active' : '' }}">Farmers</a>
+                <a href="{{ route('master.organiser.index') }}" class="{{ request()->routeIs('master.organiser.index') ? 'is-active' : '' }}">Organiser</a>
+                <a href="{{ route('seasons.index') }}" class="{{ request()->routeIs('seasons.index') ? 'is-active' : '' }}">Season</a>
+                <!--<a href="#master-employee-type">Contamination</a>-->
             </div>
             <button type="button" class="dashboard-nav-link master-nav-link" @click="verifyProductionOpen = !verifyProductionOpen" :aria-expanded="verifyProductionOpen.toString()"><span class="nav-icon">&#9673;</span><span>Verify production code</span><span class="nav-chevron" :class="{ 'is-open': verifyProductionOpen }">&#8964;</span></button>
             <div class="master-subnav" x-show="verifyProductionOpen" x-transition>
@@ -60,7 +69,7 @@
 
     <header class="top-nav" aria-label="Top navigation">
         <a href="{{ route('dashboard') }}" class="brand-mark brand-mark--top"><x-application-logo class="brand-mark__logo" /><span><strong>Agreement</strong><small>Management system</small></span></a>
-        <nav class="top-nav__links"><a href="{{ route('dashboard') }}" class="is-active">Overview</a><a href="#agreements">Agreements</a><div class="top-nav-master"><button type="button" @click="masterOpen = !masterOpen" :aria-expanded="masterOpen.toString()">Master <span class="nav-chevron" :class="{ 'is-open': masterOpen }">&#8964;</span></button><div class="top-nav-master__menu" x-show="masterOpen" x-transition><a href="#master-formar">Formar</a><a href="#master-organizer">Organizer</a><a href="#master-company">Company</a><a href="#master-employee">Employee</a><a href="#master-season">Season</a><a href="#master-employee-type">Employee type</a></div></div><a href="#activity">Activity</a><a href="#deadlines">Deadlines</a></nav>
+        <nav class="top-nav__links"><a href="{{ route('dashboard') }}" class="is-active">Overview</a><a href="#agreements">Agreements</a><div class="top-nav-master"><button type="button" @click="masterOpen = !masterOpen" :aria-expanded="masterOpen.toString()">Master <span class="nav-chevron" :class="{ 'is-open': masterOpen }">&#8964;</span></button><div class="top-nav-master__menu" x-show="masterOpen" x-transition><a href="{{ route('master.farmers.index') }}">Formar</a><a href="{{ route('master.organiser.index') }}">Organiser</a><a href="#master-company">Company</a><a href="#master-employee">Employee</a><a href="{{ route('seasons.index') }}">Season</a><a href="#master-employee-type">Employee type</a></div></div><a href="#activity">Activity</a><a href="#deadlines">Deadlines</a></nav>
         <div class="top-nav__actions"><a href="{{ route('profile.edit') }}" class="user-mini user-mini--top"><span class="user-mini__avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span><span><strong>{{ Auth::user()->name }}</strong><small>Account settings</small></span></a><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="logout-link">Log out <span>&rarr;</span></button></form></div>
     </header>
 
@@ -68,5 +77,5 @@
         <a href="{{ route('dashboard') }}" class="brand-mark"><x-application-logo class="brand-mark__logo" /><span><strong>Agreement</strong><small>Management system</small></span></a>
         <button type="button" class="mobile-nav-toggle" @click="open = !open" :aria-expanded="open.toString()" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
     </div>
-    <nav class="mobile-nav-links" x-show="open" x-transition><a href="{{ route('dashboard') }}">Overview</a><a href="#agreements">Agreements</a><button type="button" @click="masterOpen = !masterOpen" :aria-expanded="masterOpen.toString()">Master <span class="nav-chevron" :class="{ 'is-open': masterOpen }">&#8964;</span></button><div class="mobile-master-subnav" x-show="masterOpen" x-transition><a href="#master-formar">Formar</a><a href="#master-organizer">Organizer</a><a href="#master-company">Company</a><a href="#master-employee">Employee</a><a href="#master-season">Season</a><a href="#master-employee-type">Employee type</a></div><a href="#activity">Activity</a><a href="#deadlines">Deadlines</a><a href="{{ route('profile.edit') }}">Profile</a></nav>
+    <nav class="mobile-nav-links" x-show="open" x-transition><a href="{{ route('dashboard') }}">Overview</a><a href="#agreements">Agreements</a><button type="button" @click="masterOpen = !masterOpen" :aria-expanded="masterOpen.toString()">Master <span class="nav-chevron" :class="{ 'is-open': masterOpen }">&#8964;</span></button><div class="mobile-master-subnav" x-show="masterOpen" x-transition><a href="{{ route('master.farmers.index') }}">Formar</a><a href="{{ route('master.organiser.index') }}">Organiser</a><a href="#master-company">Company</a><a href="#master-employee">Employee</a><a href="{{ route('seasons.index') }}">Season</a><a href="#master-employee-type">Employee type</a></div><a href="#activity">Activity</a><a href="#deadlines">Deadlines</a><a href="{{ route('profile.edit') }}">Profile</a></nav>
 </div>

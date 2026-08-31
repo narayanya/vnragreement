@@ -4,18 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class City extends Model
+class Block extends Model
 {
-    protected $table = 'core_city';
+    protected $table = 'core_block';
 
     protected $fillable = [
         'state_id',
         'district_id',
-        'block_id',
-        'name',
-        'city_code',
-        'pincode',
+        'block_name',
+        'block_code',
         'is_active',
     ];
 
@@ -29,8 +28,8 @@ class City extends Model
         return $this->belongsTo(District::class, 'district_id');
     }
 
-    public function block(): BelongsTo
+    public function cities(): HasMany
     {
-        return $this->belongsTo(Block::class, 'block_id');
+        return $this->hasMany(City::class, 'block_id');
     }
 }
