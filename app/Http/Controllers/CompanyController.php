@@ -8,17 +8,20 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $tab = $request->get('tab', 'synced');
+
         $syncedCompanies = Company::where(function ($query) {
             $query->where('remark', 'sync')
                 ->orWhereNull('remark')
                 ->orWhere('remark', '');
-        })->get();
+        })->orderBy('company_name')->paginate(20)->withQueryString();
 
-        $customCompanies = AliasCompany::orderBy('com_id', 'desc')->get();
+        $customCompanies = AliasCompany::orderBy('com_id', 'desc')
+            ->paginate(20)->withQueryString();
 
-        return view('master.company.index', compact('syncedCompanies', 'customCompanies'));
+        return view('master.company.index', compact('syncedCompanies', 'customCompanies', 'tab'));
     }
 
     public function store(Request $request)

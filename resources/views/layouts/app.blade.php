@@ -11,14 +11,17 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- App CSS (Tailwind + custom) -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <!-- Bootstrap CSS (after Tailwind so Bootstrap components render correctly) -->
+        <!-- Bootstrap CSS — loaded first so our custom CSS can override it -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
         <!-- Remix Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+
+        <!-- custom Css-->
+        <link href="{{ asset('assets/css/custom-style.css') }}" rel="stylesheet" type="text/css" />
+
+        <!-- App CSS (Tailwind + custom) — loaded last so overrides win -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @stack('styles')
     </head>

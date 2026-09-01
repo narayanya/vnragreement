@@ -14,9 +14,9 @@
                 <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
                     <i class="ri-upload-line me-1"></i>Import
                 </button>
-                <button class="btn btn-sm btn-primary" id="addNewCropBtn">
+                {{--<button class="btn btn-sm btn-primary" id="addNewCropBtn">
                     <i class="ri-add-line me-1"></i>New Crop
-                </button>
+                </button>--}}
             </div>
         </div>
 
@@ -290,6 +290,11 @@
                             <i class="ri-seedling-line me-1"></i>Agronomy
                         </button>
                     </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#v_seed_quality">
+                            <i class="ri-seedling-line me-1"></i>Seed Quality
+                        </button>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="v_basic">
@@ -328,6 +333,20 @@
                             <tr><th>Soil Type</th><td id="c_soil">-</td></tr>
                             <tr><th>Isolation Distance</th><td id="c_isolation">-</td></tr>
                             <tr><th>Expected Yield</th><td id="c_yield">-</td></tr>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="v_seed_quality">
+                        <h5 class="form-label">Average weight in grams</h5>
+                        <table class="table table-sm table-bordered table-striped">
+                            <tr><th style="width:35%">Production Code</th> <th>100 Seeds</th> <th>1000 Seeds</th></tr>
+                            <tr><td>ED1</td><td >-</td><td >-</td></tr>
+                            <tr><td>ED1</td><td >-</td><td >-</td></tr>
+                        </table>
+
+                        <h5 class="form-label mt-4">Quality Parameters %</h5>
+                        <table class="table table-sm table-bordered table-striped">
+                            <tr><th style="width:35%">Type</th><th>Germination</th> <th>Genetic Purity</th> <th>Moisture</th></tr>
+                            <tr><td>Hybrid</td><td >78</td><td >45</td><td >45</td></tr>
                         </table>
                     </div>
                 </div>
@@ -379,6 +398,16 @@
                                 <i class="ri-plant-line me-1"></i>Seed
                             </button>
                         </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#seedweight">
+                                <i class="ri-bar-chart-line me-1"></i>Seed Weight
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#qcupdate">
+                                <i class="ri-refresh-line me-1"></i>QC Update
+                            </button>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -388,15 +417,15 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Crop Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="crop_name" class="form-control" required>
+                                    <input type="text" name="crop_name" class="form-control" readonly style="background-color: #f3f3f3;" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Crop Code <span class="text-danger">*</span></label>
-                                    <input type="text" name="crop_code" class="form-control" required>
+                                    <input type="text" name="crop_code" class="form-control" readonly style="background-color: #f3f3f3;" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Crop Name (Elias)</label>
-                                    <input type="text" name="crop_name_elias" class="form-control">
+                                    <input type="text" name="crop_name_elias" class="form-control" >
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Code (Elias)</label>
@@ -558,16 +587,126 @@
                                         <input class="form-check-input" type="radio" name="update_status" id="update_no" value="0">
                                         <label class="form-check-label" for="update_no">No</label>
                                     </div>
-                                </div>
+                                </div> 
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="seedweight">
+                            <h5 class="form-label">Average weight in grams</h5>
+                                <table class="table bordered table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Production Code</th>
+                                            <th>10 Seed</th>
+                                            <th>100 Seed</th>
+                                            <th>1000 Seed</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <select name="production_code" class="form-select form-select-sm">
+                                                    <option value="">Select code…</option>
+                                                    {{--@foreach($productionCodes as $code)
+                                                        <option value="{{ $code->id }}">{{ $code->name }}</option>
+                                                    @endforeach--}}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="seed_weight_10" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="seed_weight_100" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="seed_weight_1000" class="form-control">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary"> Add </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>ED1</td>
+                                            <td>2</td>
+                                            <td>15.02</td>
+                                            <td>150.20</td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-outline-primary"><i class="ri-edit-line"></i></a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">No seed weight records yet.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>  
+                        </div>
+                        <div class="tab-pane fade" id="qcupdate">
+                            <div class="row g-3">
+                                <table class="table bordered table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Germination(%)</th>
+                                            <th>Genetic Purity(%)</th>
+                                            <th>Moisture(%)</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <select name="crop_type" class="form-select form-select-sm">
+                                                    <option value="">Select Type…</option>
+                                                    <option value="1">Hybrid</option>
+                                                    <option value="2">OP</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="germination" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="genetic_purity" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="moisture" class="form-control">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary"> Add </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hybrid</td>
+                                            <td>78</td>
+                                            <td>48</td>
+                                            <td>50</td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-outline-primary"><i class="ri-edit-line"></i></a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP</td>
+                                            <td>78</td>
+                                            <td>48</td>
+                                            <td>50</td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-outline-primary"><i class="ri-edit-line"></i></a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">No seed quality records yet.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
 
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="cropSubmitBtn">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary" id="cropSubmitBtn">
                         <i class="ri-save-line me-1"></i>Save Crop
                     </button>
                 </div>

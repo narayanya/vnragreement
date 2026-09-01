@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Schema;
 
 class VarietyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $tab             = $request->get('tab', 'core');
         $syncedVarieties = collect();
         $customVarieties = collect();
 
@@ -19,14 +20,15 @@ class VarietyController extends Controller
                 $query->where('remark', 'sync')
                     ->orWhereNull('remark')
                     ->orWhere('remark', '');
-            })->orderBy('name')->get();
+            })->orderBy('name')->paginate(20)->withQueryString();
         }
 
         if (Schema::hasTable('alias_veriety')) {
-            $customVarieties = AliasVariety::orderBy('ver_id', 'desc')->get();
+            $customVarieties = AliasVariety::orderBy('ver_id', 'desc')
+                ->paginate(20)->withQueryString();
         }
 
-        return view('master.variety.index', compact('syncedVarieties', 'customVarieties'));
+        return view('master.variety.index', compact('syncedVarieties', 'customVarieties', 'tab'));
     }
 
     public function store(Request $request)

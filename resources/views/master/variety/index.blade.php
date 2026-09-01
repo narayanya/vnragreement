@@ -22,26 +22,46 @@
 
         <ul class="nav nav-tabs mb-3" id="varietyTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="core-tab" data-bs-toggle="tab" data-bs-target="#core-variety-tab" type="button" role="tab" aria-controls="core-variety-tab" aria-selected="true">Core Variety</button>
+                <a href="{{ route('master.variety.index', ['tab' => 'core']) }}"
+                   class="nav-link {{ $tab === 'core' ? 'active' : '' }}"
+                   role="tab">
+                   Core Variety
+                   @if(method_exists($syncedVarieties,'total'))
+                       <span class="badge ms-1 {{ $tab==='core' ? 'bg-primary' : 'bg-secondary' }}">{{ number_format($syncedVarieties->total()) }}</span>
+                   @endif
+                </a>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="custom-tab" data-bs-toggle="tab" data-bs-target="#custom-variety-tab" type="button" role="tab" aria-controls="custom-variety-tab" aria-selected="false">Custom Variety</button>
+                <a href="{{ route('master.variety.index', ['tab' => 'custom']) }}"
+                   class="nav-link {{ $tab === 'custom' ? 'active' : '' }}"
+                   role="tab">
+                   Custom Variety
+                   @if(method_exists($customVarieties,'total'))
+                       <span class="badge ms-1 {{ $tab==='custom' ? 'bg-primary' : 'bg-secondary' }}">{{ number_format($customVarieties->total()) }}</span>
+                   @endif
+                </a>
             </li>
         </ul>
 
         <div class="tab-content" id="varietyTabsContent">
-            <div class="tab-pane fade show active" id="core-variety-tab" role="tabpanel" aria-labelledby="core-tab">
-                @if ($syncedVarieties->isEmpty())
+
+            {{-- Core Variety --}}
+            <div class="{{ $tab === 'core' ? 'd-block' : 'd-none' }}">
+                @if (method_exists($syncedVarieties,'isEmpty') ? $syncedVarieties->isEmpty() : $syncedVarieties->count() === 0)
                     <div class="card">
-                        <div class="card-body text-center text-muted py-5">No core variety data available.</div>
+                        <div class="card-body text-center text-muted py-5">
+                            <i class="ri-leaf-line" style="font-size:36px;color:#c8d6e5;display:block;margin-bottom:8px"></i>
+                            No core variety data available.
+                        </div>
                     </div>
                 @else
                     <div class="card">
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-striped mb-0">
-                                    <thead>
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
                                         <tr>
+                                            <th class="ps-3" style="width:50px">#</th>
                                             <th>Name</th>
                                             <th>Code</th>
                                             <th>Status</th>
@@ -50,39 +70,61 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($syncedVarieties as $variety)
-                                            <tr>
-                                                <td>{{ $variety->name ?? '-' }}</td>
-                                                <td>{{ $variety->code ?? '-' }}</td>
-                                                <td>
-                                                    @if (($variety->status ?? 0) == 1)
-                                                        <span class="badge bg-success">Active</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">Inactive</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $variety->remark ?? '-' }}</td>
-                                            </tr>
+                                        <tr>
+                                            <td class="ps-3 text-muted">
+                                                {{ ($syncedVarieties->currentPage()-1)*$syncedVarieties->perPage()+$loop->iteration }}
+                                            </td>
+                                            <td class="fw-semibold" style="color:#172b4d">{{ $variety->name ?? '-' }}</td>
+                                            <td><span class="badge bg-info">{{ $variety->code ?? '-' }}</span></td>
+                                            <td>
+                                                @if(($variety->status ?? 0) == 1)
+                                                    <span class="badge bg-success">Active</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Inactive</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-muted">{{ $variety->remark ?? '-' }}</td>
+                                        </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        @if($syncedVarieties->hasPages())
+                        <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <small class="text-muted">
+                                Showing {{ $syncedVarieties->firstItem() }} to {{ $syncedVarieties->lastItem() }}
+                                of {{ number_format($syncedVarieties->total()) }} varieties
+                            </small>
+                            {{ $syncedVarieties->links() }}
+                        </div>
+                        @endif
                     </div>
                 @endif
             </div>
 
-            <div class="tab-pane fade" id="custom-variety-tab" role="tabpanel" aria-labelledby="custom-tab">
-                @if ($customVarieties->isEmpty())
+            {{-- Custom Variety --}}
+            <div class="{{ $tab === 'custom' ? 'd-block' : 'd-none' }}">
+                @if (method_exists($customVarieties,'isEmpty') ? $customVarieties->isEmpty() : $customVarieties->count() === 0)
                     <div class="card">
-                        <div class="card-body text-center text-muted py-5">No custom variety data available.</div>
+                        <div class="card-body text-center text-muted py-5">
+                            <i class="ri-plant-line" style="font-size:36px;color:#c8d6e5;display:block;margin-bottom:8px"></i>
+                            No custom variety data available.
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#varietyModal">
+                                    <i class="ri-add-line me-1"></i>Add First Variety
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 @else
                     <div class="card">
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-striped mb-0">
-                                    <thead>
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
                                         <tr>
+                                            <th class="ps-3" style="width:50px">#</th>
                                             <th>Name</th>
                                             <th>Catalogue No</th>
                                             <th>Company</th>
@@ -92,27 +134,44 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($customVarieties as $variety)
-                                            <tr>
-                                                <td>{{ $variety->ver_main ?: ($variety->ver_alias ?: '-') }}</td>
-                                                <td>{{ $variety->catalogue_no ?? '-' }}</td>
-                                                <td>{{ $variety->com_name ?? '-' }}</td>
-                                                <td>
-                                                    @if (($variety->Sts ?? 'A') === 'A')
-                                                        <span class="badge bg-success">Active</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">Inactive</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $variety->cr_date ? \Carbon\Carbon::parse($variety->cr_date)->format('d M Y') : '-' }}</td>
-                                            </tr>
+                                        <tr>
+                                            <td class="ps-3 text-muted">
+                                                {{ ($customVarieties->currentPage()-1)*$customVarieties->perPage()+$loop->iteration }}
+                                            </td>
+                                            <td class="fw-semibold" style="color:#172b4d">
+                                                {{ $variety->ver_main ?: ($variety->ver_alias ?: '-') }}
+                                            </td>
+                                            <td><span class="badge bg-info">{{ $variety->catalogue_no ?? '-' }}</span></td>
+                                            <td class="text-muted">{{ $variety->com_name ?? '-' }}</td>
+                                            <td>
+                                                @if(($variety->Sts ?? 'A') === 'A')
+                                                    <span class="badge bg-success">Active</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Inactive</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-muted">
+                                                {{ $variety->cr_date ? \Carbon\Carbon::parse($variety->cr_date)->format('d M Y') : '-' }}
+                                            </td>
+                                        </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        @if($customVarieties->hasPages())
+                        <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <small class="text-muted">
+                                Showing {{ $customVarieties->firstItem() }} to {{ $customVarieties->lastItem() }}
+                                of {{ number_format($customVarieties->total()) }} varieties
+                            </small>
+                            {{ $customVarieties->links() }}
+                        </div>
+                        @endif
                     </div>
                 @endif
             </div>
+
         </div>
     </div>
 

@@ -9,19 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Block extends Model
 {
     protected $table = 'core_block';
+    public    $timestamps = false;
 
     protected $fillable = [
-        'state_id',
-        'district_id',
-        'block_name',
-        'block_code',
-        'is_active',
+        'district_id', 'block_name', 'block_code',
+        'numeric_code', 'effective_date', 'is_active',
     ];
-
-    public function state(): BelongsTo
-    {
-        return $this->belongsTo(State::class, 'state_id');
-    }
 
     public function district(): BelongsTo
     {
@@ -30,6 +23,6 @@ class Block extends Model
 
     public function cities(): HasMany
     {
-        return $this->hasMany(City::class, 'block_id');
+        return $this->hasMany(City::class, 'district_id', 'district_id');
     }
 }
