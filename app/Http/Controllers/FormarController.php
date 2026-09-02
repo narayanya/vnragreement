@@ -3,6 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Formar;
+use App\Models\State;
+use App\Models\District;
+use App\Models\Block;
+use App\Models\City;
+
+use App\Models\CoreState;
+use App\Models\CoreDistrict;
+
 use Illuminate\Http\Request;
 
 class FormarController extends Controller
@@ -24,10 +32,37 @@ class FormarController extends Controller
             });
         }
 
+        if ($request->filled('from_date')) {
+            $query->whereDate('cr_date', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('cr_date', '<=', $request->to_date);
+        }
+
         $formars = $query->orderBy('fid', 'desc')->paginate(20)->withQueryString();
         $total   = Formar::count();
 
-        return view('master.farmers.index', compact('formars', 'total'));
+        $corestates    = CoreState::where('is_active', 1)->orderBy('state_name')->get();
+        $coredistricts = CoreDistrict::where('is_active', 1)->orderBy('district_name')->get();
+        //$corevillages    = City::where('is_active', 1)->orderBy('city_village_name')->get();
+        //$coreblocks    = Block::where('is_active', 1)->orderBy('block_name')->get();
+
+        $oldStates      = State::orderBy('StateName')->get();
+        $oldDistricts = \DB::table('distric')->orderBy('DictrictName')->get();
+        $oldTahsils   = \DB::table('tahsil')->orderBy('TahsilName')->get();
+        $oldVillages  = \DB::table('village')->orderBy('VillageName')->get();
+
+        // Keep for backward compat (core dropdowns)
+        $tahsils  = Block::where('is_active', 1)->orderBy('block_name')->get();
+        $villages = City::where('is_active', 1)->orderBy('city_village_name')->get();
+
+        return view('master.farmers.index', compact(
+            'formars', 'total',
+            'corestates', 'coredistricts', 
+            'oldStates', 'oldDistricts', 'oldTahsils', 'oldVillages',
+            'tahsils', 'villages'
+        ));
     }
 
     /* ── Store ──────────────────────────────────────────────── */

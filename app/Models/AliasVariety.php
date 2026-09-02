@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AliasVariety extends Model
 {
@@ -22,4 +23,9 @@ class AliasVariety extends Model
         'cr_by',
         'cr_date',
     ];
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(AliasCompany::class, 'com_id');
+    }
 }

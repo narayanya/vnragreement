@@ -11,9 +11,10 @@ class Formar extends Model
     public    $timestamps = false;
 
     protected $fillable = [
-        'tem_fid', 'fname', 'contact_1', 'contact_2', 'email',
+        'f_old', 'tem_fid', 'fname', 'contact_1', 'contact_2', 'email',
         'dob', 'age', 'father_name', 'father_contact', 'oid',
         'address', 'state_id', 'distric_id', 'tahsil_id', 'village_id',
+        'core_state_id', 'core_district_id', 'core_village_id',
         'pincode', 'aadhar_no', 'pan_no',
         'idproof_name', 'idproof_no', 'addproof_name', 'addproof_no',
         'bank_name', 'account_no', 'branch_name', 'ifsc_code', 'bank_add',

@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- Page Loader --}}
+<div id="pageLoader" class="page-loader">
+    <div class="spinner-container">
+        <div class="spinner"></div>
+        <p class="loader-text">Loading organisers data...</p>
+    </div>
+</div>
+
 <div class="row justify-content-center">
     <div class="col-12">
 
@@ -33,7 +41,7 @@
         <div class="card mb-3">
             <div class="card-body py-2">
                 <form method="GET" action="{{ route('master.organiser.index') }}">
-                    <div class="row g-2 align-items-center">
+                    <div class="row g-2 align-items-center mb-2">
                         <div class="col">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text bg-white border-end-0">
@@ -44,11 +52,23 @@
                                     value="{{ request('search') }}">
                             </div>
                         </div>
+                    </div>
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label class="form-label mb-0 text-muted" style="font-size: 12px;">From Date</label>
+                            <input type="date" name="from_date" class="form-control form-control-sm"
+                                value="{{ request('from_date') }}">
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label mb-0 text-muted" style="font-size: 12px;">To Date</label>
+                            <input type="date" name="to_date" class="form-control form-control-sm"
+                                value="{{ request('to_date') }}">
+                        </div>
                         <div class="col-auto">
                             <button type="submit" class="btn btn-sm btn-primary">
                                 <i class="ri-filter-line me-1"></i>Filter
                             </button>
-                            @if(request('search'))
+                            @if(request('search') || request('from_date') || request('to_date'))
                                 <a href="{{ route('master.organiser.index') }}" class="btn btn-sm btn-outline-secondary ms-1">
                                     <i class="ri-close-line me-1"></i>Clear
                                 </a>
@@ -404,5 +424,60 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+// Hide page loader when page is fully loaded
+window.addEventListener('load', function() {
+    const loader = document.getElementById('pageLoader');
+    if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 300);
+    }
+});
 </script>
+@endpush
+
+@push('styles')
+<style>
+    .page-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .spinner-container {
+        text-align: center;
+    }
+
+    .spinner {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+        color: #172b4d;
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0;
+    }
+</style>
 @endpush

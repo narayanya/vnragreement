@@ -23,9 +23,13 @@ class EmployeeController extends Controller
             });
         }
 
-        // Status filter
+        // Status filter  (A = Active, D/I/0 = Inactive)
         if ($request->filled('status')) {
-            $query->where('emp_status', $request->status);
+            if ($request->status === 'A') {
+                $query->where('emp_status', 'A');
+            } elseif ($request->status === 'inactive') {
+                $query->whereIn('emp_status', ['I', 'D', '0']);
+            }
         }
 
         // Department filter
@@ -39,10 +43,10 @@ class EmployeeController extends Controller
         }
 
         // Counts (before pagination, after filters except status)
-        $baseQuery   = Employee::query();
-        $totalCount  = $baseQuery->count();
-        $activeCount = (clone $baseQuery)->where('emp_status', 'A')->count();
-        $inactiveCount = (clone $baseQuery)->where('emp_status', 'I')->count();
+        $baseQuery     = Employee::query();
+        $totalCount    = $baseQuery->count();
+        $activeCount   = (clone $baseQuery)->where('emp_status', 'A')->count();
+        $inactiveCount = (clone $baseQuery)->whereIn('emp_status', ['I', 'D', '0'])->count();
 
         $employees = $query->orderBy('emp_name')->paginate(20)->withQueryString();
 

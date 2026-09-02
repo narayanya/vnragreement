@@ -11,20 +11,13 @@ class VarietyController extends Controller
 {
     public function index(Request $request)
     {
-        $tab             = $request->get('tab', 'core');
+        $tab             = 'custom';
         $syncedVarieties = collect();
         $customVarieties = collect();
 
-        if (Schema::hasTable('core_variety')) {
-            $syncedVarieties = Variety::where(function ($query) {
-                $query->where('remark', 'sync')
-                    ->orWhereNull('remark')
-                    ->orWhere('remark', '');
-            })->orderBy('name')->paginate(20)->withQueryString();
-        }
-
         if (Schema::hasTable('alias_veriety')) {
-            $customVarieties = AliasVariety::orderBy('ver_id', 'desc')
+            $customVarieties = AliasVariety::with('company')
+                ->orderBy('ver_id', 'desc')
                 ->paginate(20)->withQueryString();
         }
 
@@ -87,5 +80,46 @@ class VarietyController extends Controller
         }
 
         return redirect()->route('master.variety.index')->with('success', 'Synced variety list updated.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'ver_main' => 'required|string|max:255',
+            'ver_alias' => 'nullable|string|max:255',
+            'catalogue_no' => 'nullable|string|max:255',
+            'com_id' => 'nullable|integer',
+            'Sts' => 'nullable|in:A,I',
+        ]);
+
+        if (Schema::hasTable('alias_veriety')) {
+            AliasVariety::where('ver_id', $id)->update([
+                'ver_main' => $request->ver_main,
+                'ver_alias' => $request->ver_alias,
+                'catalogue_no' => $request->catalogue_no,
+                'com_id' => $request->com_id ?? 0,
+                'Sts' => $request->Sts ?? 'A',
+            ]);
+        }
+
+        return redirect()->route('master.variety.index')->with('success', 'Variety updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        if (Schema::hasTable('alias_veriety')) {
+            AliasVariety::where('ver_id', $id)->delete();
+        }
+
+        return redirect()->route('master.variety.index')->with('success', 'Variety deleted successfully.');
+    }
+
+    public function getCompanies()
+    {
+        $companies = [];
+        if (Schema::hasTable('alias_company')) {
+            $companies = \App\Models\AliasCompany::select('com_id as id', 'com_main')->get()->toArray();
+        }
+        return response()->json($companies);
     }
 }

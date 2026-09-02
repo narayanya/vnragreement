@@ -198,25 +198,29 @@
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Phone</label>
-                        <input type="text" name="phone" class="form-control">
-                    </div>
+                    
                     <div class="mb-3">
                         <label class="form-label">Website</label>
                         <input type="url" name="website" class="form-control">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <textarea name="address" class="form-control" rows="3"></textarea>
+                    <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control">
                     </div>
-                    <div class="mb-3">
+                    <div class="col-md-6">
                         <label class="form-label">Status</label>
                         <select name="status" class="form-select">
                             <option value="1" selected>Active</option>
                             <option value="0">Inactive</option>
                         </select>
                     </div>
+                </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="3"></textarea>
+                    </div>
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

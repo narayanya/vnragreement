@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- Page Loader --}}
+<div id="pageLoader" class="page-loader">
+    <div class="spinner-container">
+        <div class="spinner"></div>
+        <p class="loader-text">Loading farmers data...</p>
+    </div>
+</div>
+
 <div class="row justify-content-center">
     <div class="col-12">
 
@@ -33,7 +41,7 @@
         <div class="card mb-3">
             <div class="card-body py-2">
                 <form method="GET" action="{{ route('master.farmers.index') }}">
-                    <div class="row g-2 align-items-center">
+                    <div class="row g-2 align-items-center mb-2">
                         <div class="col">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text bg-white border-end-0">
@@ -44,11 +52,23 @@
                                     value="{{ request('search') }}">
                             </div>
                         </div>
+                    </div>
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label class="form-label mb-0 text-muted" style="font-size: 12px;">From Date</label>
+                            <input type="date" name="from_date" class="form-control form-control-sm"
+                                value="{{ request('from_date') }}">
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label mb-0 text-muted" style="font-size: 12px;">To Date</label>
+                            <input type="date" name="to_date" class="form-control form-control-sm"
+                                value="{{ request('to_date') }}">
+                        </div>
                         <div class="col-auto">
                             <button type="submit" class="btn btn-sm btn-primary">
                                 <i class="ri-filter-line me-1"></i>Filter
                             </button>
-                            @if(request('search'))
+                            @if(request('search') || request('from_date') || request('to_date'))
                                 <a href="{{ route('master.farmers.index') }}" class="btn btn-sm btn-outline-secondary ms-1">
                                     <i class="ri-close-line me-1"></i>Clear
                                 </a>
@@ -150,6 +170,10 @@
                                             data-age="{{ $farmer->age }}"
                                             data-address="{{ $farmer->address }}"
                                             data-pincode="{{ $farmer->pincode }}"
+                                            data-state_id="{{ $farmer->state_id }}"
+                                            data-distric_id="{{ $farmer->distric_id }}"
+                                            data-tahsil_id="{{ $farmer->tahsil_id }}"
+                                            data-village_id="{{ $farmer->village_id }}"
                                             data-aadhar_no="{{ $farmer->aadhar_no }}"
                                             data-pan_no="{{ $farmer->pan_no }}"
                                             data-idproof_name="{{ $farmer->idproof_name }}"
@@ -161,6 +185,7 @@
                                             data-branch_name="{{ $farmer->branch_name }}"
                                             data-ifsc_code="{{ $farmer->ifsc_code }}"
                                             data-bank_add="{{ $farmer->bank_add }}"
+                                            data-doc_passbook="{{ $farmer->doc_passbook }}"
                                             data-total_land="{{ $farmer->total_land }}"
                                             title="Edit">
                                             <i class="ri-edit-line"></i>
@@ -358,8 +383,59 @@
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label class="form-label">Address</label>
-                                    <textarea name="address" class="form-control" rows="3" maxlength="150"></textarea>
+                                    <textarea name="address" class="form-control" rows="2" maxlength="150"></textarea>
                                 </div>
+
+                                {{-- State — old table --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">State</label>
+                                    <select name="state_id" id="fa_state_id" class="form-select form-select-sm">
+                                        <option value="">-- Select State --</option>
+                                        @foreach($oldStates as $oldstate)
+                                            <option value="{{ $oldstate->StateId }}">{{ $oldstate->StateName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- District — old table (distric) --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">District</label>
+                                    <select name="distric_id" id="fa_distric_id" class="form-select form-select-sm">
+                                        <option value="">-- Select District --</option>
+                                        @foreach($oldDistricts as $dist)
+                                            <option value="{{ $dist->DictrictId }}" data-state="{{ $dist->StateId }}">
+                                                {{ $dist->DictrictName }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- Tahsil — old table --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">Tahsil</label>
+                                    <select name="tahsil_id" id="fa_tahsil_id" class="form-select form-select-sm">
+                                        <option value="">-- Select Tahsil --</option>
+                                        @foreach($oldTahsils as $tahsil)
+                                            <option value="{{ $tahsil->TahsilId }}" data-district="{{ $tahsil->DistrictId }}">
+                                                {{ $tahsil->TahsilName }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- Village — old table --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">Village</label>
+                                    <select name="village_id" id="fa_village_id" class="form-select form-select-sm">
+                                        <option value="">-- Select Village --</option>
+                                        @foreach($oldVillages as $village)
+                                            <option value="{{ $village->VillageId }}" data-tahsil="{{ $village->TahsilId }}">
+                                                {{ $village->VillageName }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                                 <div class="col-md-6">
                                     <label class="form-label">Pincode</label>
                                     <input type="text" name="pincode" class="form-control" maxlength="10">
@@ -387,12 +463,22 @@
                                     <input type="text" name="idproof_no" class="form-control" maxlength="20">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Address Proof Name</label>
-                                    <input type="text" name="addproof_name" class="form-control" maxlength="30">
+                                    <label class="form-label">Address Proof Type</label>
+                                    <select name="addproof_name" class="form-select form-select-sm">
+                                        <option value="">-- Select Type --</option>
+                                        <option value="Aadhar">Aadhar</option>
+                                        <option value="PAN">PAN</option>
+                                        <option value="Rashan Card">Rashan Card</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Address Proof No</label>
                                     <input type="text" name="addproof_no" class="form-control" maxlength="20">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Upload Address Proof Document</label>
+                                    <input type="file" name="doc_addproof" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                    <small class="text-muted">Allowed formats: PDF, JPG, JPEG, PNG, DOC, DOCX</small>
                                 </div>
                             </div>
                         </div>
@@ -420,6 +506,20 @@
                                     <label class="form-label">Bank Address</label>
                                     <input type="text" name="bank_add" class="form-control" maxlength="100">
                                 </div>
+                                <div class="col-12">
+                                    <label class="form-label">Bank Passbook / Document</label>
+                                    <div id="existingBankDoc" class="alert alert-info d-none mb-2">
+                                        <small>
+                                            <i class="ri-file-check-line me-1"></i>
+                                            Document uploaded: <strong id="bankDocName">-</strong>
+                                            <button type="button" class="btn btn-sm btn-outline-warning float-end" id="changeBankDoc">
+                                                <i class="ri-edit-line me-1"></i>Change
+                                            </button>
+                                        </small>
+                                    </div>
+                                    <input type="file" name="doc_passbook" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                    <small class="text-muted">Allowed formats: PDF, JPG, JPEG, PNG, DOC, DOCX</small>
+                                </div>
                             </div>
                         </div>
 
@@ -446,6 +546,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const modalEl = document.getElementById('farmerModal');
     const modal   = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    // ── Cascading address dropdowns (defined first so edit handler can use them) ──
+    const allDistrictOpts = Array.from(document.querySelectorAll('#fa_distric_id option'));
+    const allTahsilOpts   = Array.from(document.querySelectorAll('#fa_tahsil_id option'));
+    const allVillageOpts  = Array.from(document.querySelectorAll('#fa_village_id option'));
+
+    function filterSelect(selectEl, allOpts, filterAttr, filterVal, keepVal) {
+        if (!selectEl) return;
+        selectEl.innerHTML = '<option value="">-- Select --</option>';
+        allOpts.forEach(opt => {
+            if (!opt.value) return;
+            if (!filterVal || opt.dataset[filterAttr] == filterVal) {
+                const clone = opt.cloneNode(true);
+                if (keepVal && clone.value == keepVal) clone.selected = true;
+                selectEl.appendChild(clone);
+            }
+        });
+    }
+
+    document.getElementById('fa_state_id')?.addEventListener('change', function () {
+        filterSelect(document.getElementById('fa_distric_id'), allDistrictOpts, 'state',    this.value, '');
+        filterSelect(document.getElementById('fa_tahsil_id'),  allTahsilOpts,   'district', '',         '');
+        filterSelect(document.getElementById('fa_village_id'), allVillageOpts,  'tahsil',   '',         '');
+    });
+
+    document.getElementById('fa_distric_id')?.addEventListener('change', function () {
+        filterSelect(document.getElementById('fa_tahsil_id'),  allTahsilOpts,  'district', this.value, '');
+        filterSelect(document.getElementById('fa_village_id'), allVillageOpts, 'tahsil',   '',         '');
+    });
+
+    document.getElementById('fa_tahsil_id')?.addEventListener('change', function () {
+        filterSelect(document.getElementById('fa_village_id'), allVillageOpts, 'tahsil', this.value, '');
+    });
 
     function resetToFirstTab() {
         document.querySelector('#farmerTabs .nav-link.active')?.classList.remove('active');
@@ -481,6 +614,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '-'; };
             set('v_tem_fid',       d.tem_fid);
             set('v_fname',         d.fname);
+            set('v_father_name',   d.father_name);
             set('v_father_name',   d.father_name);
             set('v_father_contact',d.father_contact);
             set('v_contact_1',     d.contact_1);
@@ -531,9 +665,22 @@ document.addEventListener('DOMContentLoaded', function () {
             setVal(form, 'contact_2',      d.contact_2);
             setVal(form, 'email',          d.email);
             setVal(form, 'total_land',     d.total_land);
-            // Address
+            // Address — set with cascade
             setVal(form, 'address', d.address);
             setVal(form, 'pincode', d.pincode);
+
+            // State → filter districts → set district → filter tahsils → set tahsil → filter villages → set village
+            const stateEl   = document.getElementById('fa_state_id');
+            const distEl    = document.getElementById('fa_distric_id');
+            const tahsilEl  = document.getElementById('fa_tahsil_id');
+            const villageEl = document.getElementById('fa_village_id');
+
+            if (stateEl) {
+                stateEl.value = d.state_id || '';
+                filterSelect(distEl,   allDistrictOpts, 'state',    d.state_id,   d.distric_id);
+                filterSelect(tahsilEl, allTahsilOpts,   'district', d.distric_id, d.tahsil_id);
+                filterSelect(villageEl,allVillageOpts,  'tahsil',   d.tahsil_id,  d.village_id);
+            }
             // Docs
             setVal(form, 'aadhar_no',     d.aadhar_no);
             setVal(form, 'pan_no',        d.pan_no);
@@ -547,6 +694,21 @@ document.addEventListener('DOMContentLoaded', function () {
             setVal(form, 'branch_name', d.branch_name);
             setVal(form, 'ifsc_code',   d.ifsc_code);
             setVal(form, 'bank_add',    d.bank_add);
+
+            // Handle bank document display
+            const existingDocDiv = document.getElementById('existingBankDoc');
+            const bankDocNameEl = document.getElementById('bankDocName');
+            const docPassbookInput = form.querySelector('[name="doc_passbook"]');
+            
+            if (d.doc_passbook) {
+                existingDocDiv.classList.remove('d-none');
+                bankDocNameEl.textContent = d.doc_passbook;
+                docPassbookInput.value = '';
+            } else {
+                existingDocDiv.classList.add('d-none');
+                bankDocNameEl.textContent = '-';
+                docPassbookInput.value = '';
+            }
 
             // _method = PATCH
             let mi = form.querySelector('input[name="_method"]');
@@ -564,5 +726,60 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+// Hide page loader when page is fully loaded
+window.addEventListener('load', function() {
+    const loader = document.getElementById('pageLoader');
+    if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 300);
+    }
+});
 </script>
+@endpush
+
+@push('styles')
+<style>
+    .page-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .spinner-container {
+        text-align: center;
+    }
+
+    .spinner {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+        color: #172b4d;
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0;
+    }
+</style>
 @endpush

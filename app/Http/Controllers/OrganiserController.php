@@ -23,6 +23,14 @@ class OrganiserController extends Controller
             });
         }
 
+        if ($request->filled('from_date')) {
+            $query->whereDate('cr_date', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('cr_date', '<=', $request->to_date);
+        }
+
         $organisers = $query->orderBy('oid', 'desc')->paginate(20)->withQueryString();
         $total      = Organiser::count();
 

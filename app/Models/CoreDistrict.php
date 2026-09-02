@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class District extends Model
+class CoreDistrict extends Model
 {
-    protected $table = 'distric';
+    protected $table = 'core_district';
     protected $fillable = [
-        'StateId', 'DistrictName', 'DistrictId', 'status'
+        'state_id', 'district_name', 'district_code', 'numeric_code', 'effective_date', 'is_active',
     ];
 
     public function state(): BelongsTo
     {
-        return $this->belongsTo(State::class, 'StateId');
+        return $this->belongsTo(State::class, 'state_id');
     }
 
     public function blocks(): HasMany
     {
-        return $this->hasMany(Block::class, 'DistrictId');
+        return $this->hasMany(Block::class, 'district_id');
     }
 }

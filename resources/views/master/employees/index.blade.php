@@ -20,8 +20,8 @@
                    class="badge text-decoration-none fs-6 {{ request('status')==='A' ? 'bg-success' : 'bg-light text-dark border' }}">
                     <i class="ri-checkbox-circle-line me-1"></i>Active &nbsp;<span class="badge bg-white text-dark">{{ $activeCount }}</span>
                 </a>
-                <a href="{{ route('master.employees.index', array_merge(request()->except('status','page'), ['status'=>'I'])) }}"
-                   class="badge text-decoration-none fs-6 {{ request('status')==='I' ? 'bg-danger' : 'bg-light text-dark border' }}">
+                <a href="{{ route('master.employees.index', array_merge(request()->except('status','page'), ['status'=>'inactive'])) }}"
+                   class="badge text-decoration-none fs-6 {{ request('status')==='inactive' ? 'bg-danger' : 'bg-light text-dark border' }}">
                     <i class="ri-close-circle-line me-1"></i>Inactive &nbsp;<span class="badge bg-white text-dark">{{ $inactiveCount }}</span>
                 </a>
             </div>
@@ -48,8 +48,8 @@
                         <label class="form-label small mb-1">Status</label>
                         <select name="status" class="form-select form-select-sm" id="statusSelect">
                             <option value="">All Status</option>
-                            <option value="A" {{ request('status')==='A' ? 'selected' : '' }}>Active</option>
-                            <option value="I" {{ request('status')==='I' ? 'selected' : '' }}>Inactive</option>
+                            <option value="A"        {{ request('status')==='A'        ? 'selected' : '' }}>Active</option>
+                            <option value="inactive" {{ request('status')==='inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>
                     </div>
 
@@ -173,8 +173,12 @@
                                 <td>
                                     @if($emp->emp_status === 'A')
                                         <span class="badge bg-success">Active</span>
+                                    @elseif($emp->emp_status === 'D')
+                                        <span class="badge bg-danger">Deactivated</span>
+                                    @elseif($emp->emp_status === 'I')
+                                        <span class="badge bg-warning">Inactive</span>
                                     @else
-                                        <span class="badge bg-danger">Inactive</span>
+                                        <span class="badge bg-secondary">{{ $emp->emp_status ?? '—' }}</span>
                                     @endif
                                 </td>
                             </tr>

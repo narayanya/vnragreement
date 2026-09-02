@@ -8,6 +8,8 @@ class AliasCompany extends Model
 {
     protected $table = 'alias_company';
 
+    protected $primaryKey = 'com_id';
+
     public $timestamps = false;
 
     protected $fillable = [
