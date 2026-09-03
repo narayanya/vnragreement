@@ -143,6 +143,10 @@
                                             data-address="{{ $org->address }}"
                                             data-city="{{ $org->city }}"
                                             data-pincode="{{ $org->pincode }}"
+                                            data-state_id="{{ $org->state_id }}"
+                                            data-district_id="{{ $org->district_id }}"
+                                            data-tahsil_id="{{ $org->tahsil_id }}"
+                                            data-village_id="{{ $org->village_id }}"
                                             data-aadhar_no="{{ $org->aadhar_no }}"
                                             data-pan_no="{{ $org->pan_no }}"
                                             data-bank_name="{{ $org->bank_name }}"
@@ -152,6 +156,21 @@
                                             data-authorized_signatory="{{ $org->authorized_signatory }}"
                                             title="Edit">
                                             <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info viewOrganiserBtn"
+                                            data-oname="{{ $org->oname }}"
+                                            data-fname="{{ $org->fname }}"
+                                            data-mobile_1="{{ $org->mobile_1 }}"
+                                            data-email="{{ $org->email }}"
+                                            data-address="{{ $org->address }}"
+                                            data-state_id="{{ $org->state_id }}"
+                                            data-district_id="{{ $org->district_id }}"
+                                            data-tahsil_id="{{ $org->tahsil_id }}"
+                                            data-village_id="{{ $org->village_id }}"
+                                            data-city="{{ $org->city }}"
+                                            data-pincode="{{ $org->pincode }}"
+                                            title="View details">
+                                            <i class="ri-eye-line"></i>
                                         </button>
                                         {{-- Delete --}}
                                         <form action="{{ route('master.organiser.destroy', $org->oid) }}" method="POST" class="d-inline"
@@ -294,6 +313,42 @@
                                     <input type="text" name="city" class="form-control" maxlength="30">
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label">State</label>
+                                    <select name="state_id" id="org_state_id" class="form-select">
+                                        <option value="">-- Select State --</option>
+                                        @foreach($oldStates as $state)
+                                            <option value="{{ $state->StateId }}">{{ $state->StateName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">District</label>
+                                    <select name="district_id" id="org_district_id" class="form-select">
+                                        <option value="">-- Select District --</option>
+                                        @foreach($oldDistricts as $district)
+                                            <option value="{{ $district->DictrictId }}" data-state="{{ $district->StateId }}">{{ $district->DictrictName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Tahsil</label>
+                                    <select name="tahsil_id" id="org_tahsil_id" class="form-select">
+                                        <option value="">-- Select Tahsil --</option>
+                                        @foreach($oldTahsils as $tahsil)
+                                            <option value="{{ $tahsil->TahsilId }}" data-district="{{ $tahsil->DistrictId }}">{{ $tahsil->TahsilName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Village</label>
+                                    <select name="village_id" id="org_village_id" class="form-select">
+                                        <option value="">-- Select Village --</option>
+                                        @foreach($oldVillages as $village)
+                                            <option value="{{ $village->VillageId }}" data-tahsil="{{ $village->TahsilId }}">{{ $village->VillageName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label">Pincode</label>
                                     <input type="text" name="pincode" class="form-control" maxlength="10">
                                 </div>
@@ -341,6 +396,32 @@
     </div>
 </div>
 
+<div class="modal fade" id="organiserDetailsModal" tabindex="-1" aria-labelledby="organiserDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="organiserDetailsModalLabel"><i class="ri-eye-line me-1"></i>Organiser Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6"><strong>Name</strong><div id="detail_oname" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>Father Name</strong><div id="detail_fname" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>Mobile</strong><div id="detail_mobile_1" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>Email</strong><div id="detail_email" class="text-muted"></div></div>
+                    <div class="col-12"><strong>Address</strong><div id="detail_address" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>State</strong><div id="detail_state" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>District</strong><div id="detail_district" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>Tahsil</strong><div id="detail_tahsil" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>Village</strong><div id="detail_village" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>City</strong><div id="detail_city" class="text-muted"></div></div>
+                    <div class="col-md-6"><strong>Pincode</strong><div id="detail_pincode" class="text-muted"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -349,6 +430,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const modalEl = document.getElementById('organiserModal');
     const modal   = bootstrap.Modal.getOrCreateInstance(modalEl);
+    const detailsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('organiserDetailsModal'));
+
+    const stateEl = document.getElementById('org_state_id');
+    const districtEl = document.getElementById('org_district_id');
+    const tahsilEl = document.getElementById('org_tahsil_id');
+    const villageEl = document.getElementById('org_village_id');
+    const allDistrictOpts = Array.from(districtEl.options);
+    const allTahsilOpts = Array.from(tahsilEl.options);
+    const allVillageOpts = Array.from(villageEl.options);
+
+    function filterSelect(selectEl, allOpts, filterAttr, filterVal, selectedVal) {
+        selectEl.innerHTML = '<option value="">-- Select --</option>';
+        allOpts.forEach(option => {
+            if (!option.value || (filterVal && option.dataset[filterAttr] != filterVal)) return;
+            const clone = option.cloneNode(true);
+            if (selectedVal && clone.value == selectedVal) clone.selected = true;
+            selectEl.appendChild(clone);
+        });
+    }
+
+    stateEl.addEventListener('change', function () {
+        filterSelect(districtEl, allDistrictOpts, 'state', this.value, '');
+        filterSelect(tahsilEl, allTahsilOpts, 'district', '', '');
+        filterSelect(villageEl, allVillageOpts, 'tahsil', '', '');
+    });
+    districtEl.addEventListener('change', function () {
+        filterSelect(tahsilEl, allTahsilOpts, 'district', this.value, '');
+        filterSelect(villageEl, allVillageOpts, 'tahsil', '', '');
+    });
+    tahsilEl.addEventListener('change', function () {
+        filterSelect(villageEl, allVillageOpts, 'tahsil', this.value, '');
+    });
 
     function resetToFirstTab() {
         document.querySelector('#organiserTabs .nav-link.active')?.classList.remove('active');
@@ -365,6 +478,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function openAdd() {
         const form = document.getElementById('organiserForm');
         form.reset();
+        filterSelect(districtEl, allDistrictOpts, 'state', '', '');
+        filterSelect(tahsilEl, allTahsilOpts, 'district', '', '');
+        filterSelect(villageEl, allVillageOpts, 'tahsil', '', '');
         form.action = '{{ route("master.organiser.store") }}';
         document.getElementById('organiserModalLabel').innerHTML = '<i class="ri-add-line me-1"></i>New Organiser';
         document.getElementById('organiserSubmitBtn').innerHTML  = '<i class="ri-save-line me-1"></i>Save Organiser';
@@ -402,6 +518,10 @@ document.addEventListener('DOMContentLoaded', function () {
             setVal(form, 'address', d.address);
             setVal(form, 'city',    d.city);
             setVal(form, 'pincode', d.pincode);
+            stateEl.value = d.state_id || '';
+            filterSelect(districtEl, allDistrictOpts, 'state', d.state_id, d.district_id);
+            filterSelect(tahsilEl, allTahsilOpts, 'district', d.district_id, d.tahsil_id);
+            filterSelect(villageEl, allVillageOpts, 'tahsil', d.tahsil_id, d.village_id);
             // Bank
             setVal(form, 'bank_name',   d.bank_name);
             setVal(form, 'account_no',  d.account_no);
@@ -420,6 +540,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
             resetToFirstTab();
             modal.show();
+        });
+    });
+
+    document.querySelectorAll('.viewOrganiserBtn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const d = this.dataset;
+            const labels = {
+                state: stateEl,
+                district: districtEl,
+                tahsil: tahsilEl,
+                village: villageEl
+            };
+            Object.entries({
+                oname: d.oname, fname: d.fname, mobile_1: d.mobile_1, email: d.email,
+                address: d.address, city: d.city, pincode: d.pincode
+            }).forEach(([name, value]) => {
+                document.getElementById('detail_' + name).textContent = value || '-';
+            });
+            Object.entries(labels).forEach(([name, select]) => {
+                const id = d[name + '_id'];
+                document.getElementById('detail_' + name).textContent =
+                    id ? (select.querySelector('option[value="' + id + '"]')?.textContent.trim() || '-') : '-';
+            });
+            detailsModal.show();
         });
     });
 

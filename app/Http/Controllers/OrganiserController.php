@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Organiser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrganiserController extends Controller
 {
@@ -34,7 +35,14 @@ class OrganiserController extends Controller
         $organisers = $query->orderBy('oid', 'desc')->paginate(20)->withQueryString();
         $total      = Organiser::count();
 
-        return view('master.organiser.index', compact('organisers', 'total'));
+        $oldStates    = DB::table('state')->orderBy('StateName')->get();
+        $oldDistricts = DB::table('distric')->orderBy('DictrictName')->get();
+        $oldTahsils   = DB::table('tahsil')->orderBy('TahsilName')->get();
+        $oldVillages  = DB::table('village')->orderBy('VillageName')->get();
+
+        return view('master.organiser.index', compact(
+            'organisers', 'total', 'oldStates', 'oldDistricts', 'oldTahsils', 'oldVillages'
+        ));
     }
 
     /* ── Store ──────────────────────────────────────────────── */

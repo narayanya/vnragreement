@@ -143,6 +143,7 @@
                                             data-email="{{ $farmer->email }}"
                                             data-dob="{{ $farmer->dob }}"
                                             data-age="{{ $farmer->age }}"
+                                            data-oid="{{ $farmer->oid }}"
                                             data-address="{{ $farmer->address }}"
                                             data-pincode="{{ $farmer->pincode }}"
                                             data-aadhar_no="{{ $farmer->aadhar_no }}"
@@ -168,6 +169,7 @@
                                             data-email="{{ $farmer->email }}"
                                             data-dob="{{ $farmer->dob }}"
                                             data-age="{{ $farmer->age }}"
+                                            data-oid="{{ $farmer->oid }}"
                                             data-address="{{ $farmer->address }}"
                                             data-pincode="{{ $farmer->pincode }}"
                                             data-state_id="{{ $farmer->state_id }}"
@@ -255,6 +257,11 @@
                             <i class="ri-bank-line me-1"></i>Bank
                         </button>
                     </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#vf_land">
+                            <i class="ri-map-2-line me-1"></i>Land Details
+                        </button>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="vf_basic">
@@ -284,6 +291,30 @@
                             <tr><th>IFSC Code</th><td id="v_ifsc_code">-</td></tr>
                         </table>
                     </div>
+
+                    {{-- View Land tab --}}
+                    <div class="tab-pane fade" id="vf_land">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle mb-0" style="font-size:12px">
+                                <thead class="table-light" style="text-transform:uppercase;letter-spacing:.4px;font-size:11px">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>State</th>
+                                        <th>District</th>
+                                        <th>Tahsil</th>
+                                        <th>Village</th>
+                                        <th>Area (Ac)</th>
+                                        <th>Khasra / Survey No.</th>
+                                        <th>Plot No.</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="viewLandTableBody">
+                                    <tr><td colspan="8" class="text-center text-muted py-3">Loading…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="modal-footer">
@@ -328,6 +359,11 @@
                                 <i class="ri-bank-line me-1"></i>Bank
                             </button>
                         </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#f_land">
+                                <i class="ri-map-2-line me-1"></i>Land Details
+                            </button>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -337,11 +373,22 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Farmer ID (Temp)</label>
-                                    <input type="text" name="tem_fid" class="form-control" maxlength="30">
+                                    <input type="text" name="tem_fid" class="form-control" maxlength="30" readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Farmer Name <span class="text-danger">*</span></label>
                                     <input type="text" name="fname" class="form-control" required maxlength="50">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Organiser</label>
+                                    <select name="oid" class="form-select">
+                                        <option value="">-- Select Organiser --</option>
+                                        @foreach($organisers as $organiser)
+                                            <option value="{{ $organiser->oid }}">
+                                                {{ $organiser->oname }}{{ $organiser->tmp_oid ? ' ('.$organiser->tmp_oid.')' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Father Name</label>
@@ -523,6 +570,127 @@
                             </div>
                         </div>
 
+                        {{-- Land Details --}}
+                        <div class="tab-pane fade" id="f_land">
+                            {{-- Only shown when editing (fid exists) --}}
+                            <div id="landEditSection" class="d-none">
+
+                                {{-- Add new land entry --}}
+                                <div class="card mb-3 border" style="background:#f6f8fb">
+                                    <div class="card-body py-3">
+                                        <h6 class="mb-3" style="color:#172b4d;font-weight:700">
+                                            <i class="ri-add-line me-1"></i>Add Land Entry
+                                        </h6>
+                                        <div class="row g-2">
+                                            {{-- State --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label">State <span class="text-danger">*</span></label>
+                                                <select id="land_StateId" class="form-select form-select-sm">
+                                                    <option value="">-- Select State --</option>
+                                                    @foreach($oldStates as $oldState)
+                                                        <option value="{{ $oldState->StateId }}">{{ $oldState->StateName }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            {{-- District --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label">District <span class="text-danger">*</span></label>
+                                                <select id="land_DictrictId" class="form-select form-select-sm">
+                                                    <option value="">-- Select District --</option>
+                                                    @foreach($oldDistricts as $dist)
+                                                        <option value="{{ $dist->DictrictId }}" data-state="{{ $dist->StateId }}">{{ $dist->DictrictName }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            {{-- Tahsil --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label">Tahsil <span class="text-danger">*</span></label>
+                                                <select id="land_TahsilId" class="form-select form-select-sm">
+                                                    <option value="">-- Select Tahsil --</option>
+                                                    @foreach($oldTahsils as $tahsil)
+                                                        <option value="{{ $tahsil->TahsilId }}" data-district="{{ $tahsil->DistrictId }}">{{ $tahsil->TahsilName }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            {{-- Village --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label">Village <span class="text-danger">*</span></label>
+                                                <select id="land_VillageId" class="form-select form-select-sm">
+                                                    <option value="">-- Select Village --</option>
+                                                    @foreach($oldVillages as $village)
+                                                        <option value="{{ $village->VillageId }}" data-tahsil="{{ $village->TahsilId }}">{{ $village->VillageName }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            {{-- Sowing Area --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label">Sowing Area (Acres) <span class="text-danger">*</span></label>
+                                                <input type="number" id="land_area" class="form-control form-control-sm" step="0.001" min="0.001" placeholder="e.g. 2.500">
+                                            </div>
+                                            {{-- Khasra No --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label">Khasra / Survey No. <span class="text-danger">*</span></label>
+                                                <input type="text" id="land_khasra_no" class="form-control form-control-sm" maxlength="30" placeholder="e.g. 123/A">
+                                            </div>
+                                            {{-- Plot No --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label">Plot No.</label>
+                                                <input type="text" id="land_plot_no" class="form-control form-control-sm" maxlength="30" placeholder="Optional">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 d-flex gap-2 align-items-center">
+                                            <button type="button" class="btn btn-sm btn-primary" id="addLandEntryBtn">
+                                                <i class="ri-add-line me-1"></i>Add Entry
+                                            </button>
+                                            <span id="landSaveMsg" class="text-success" style="font-size:12px;display:none">
+                                                <i class="ri-checkbox-circle-line me-1"></i>Entry added successfully.
+                                            </span>
+                                            <span id="landErrMsg" class="text-danger" style="font-size:12px;display:none"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Land entries table --}}
+                                <div>
+                                    <h6 class="mb-2" style="color:#172b4d;font-weight:700">
+                                        <i class="ri-list-check me-1"></i>Land Entries
+                                        <span id="landCount" class="badge ms-1" style="background:#e6f4f3;color:#187b78;font-size:11px">0</span>
+                                    </h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover align-middle mb-0" style="font-size:12px">
+                                            <thead class="table-light" style="text-transform:uppercase;letter-spacing:.4px;font-size:11px">
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>State</th>
+                                                    <th>District</th>
+                                                    <th>Tahsil</th>
+                                                    <th>Village</th>
+                                                    <th>Area (Ac)</th>
+                                                    <th>Khasra / Survey No.</th>
+                                                    <th>Plot No.</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="landTableBody">
+                                                <tr id="landEmptyRow">
+                                                    <td colspan="9" class="text-center text-muted py-3">No land entries yet.</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {{-- Shown when adding new farmer --}}
+                            <div id="landNewSection">
+                                <div class="alert alert-info mb-0" style="font-size:13px">
+                                    <i class="ri-information-line me-2"></i>
+                                    Save the farmer first, then add land details from the <strong>Edit</strong> form.
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -578,6 +746,153 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('fa_tahsil_id')?.addEventListener('change', function () {
         filterSelect(document.getElementById('fa_village_id'), allVillageOpts, 'tahsil', this.value, '');
+    });
+
+    // ── Land dropdown options ─────────────────────────────────
+    const allLandDistOpts  = Array.from(document.querySelectorAll('#land_DictrictId option'));
+    const allLandTahsOpts  = Array.from(document.querySelectorAll('#land_TahsilId option'));
+    const allLandVillOpts  = Array.from(document.querySelectorAll('#land_VillageId option'));
+
+    document.getElementById('land_StateId')?.addEventListener('change', function () {
+        filterSelect(document.getElementById('land_DictrictId'), allLandDistOpts, 'state',    this.value, '');
+        filterSelect(document.getElementById('land_TahsilId'),   allLandTahsOpts, 'district', '',         '');
+        filterSelect(document.getElementById('land_VillageId'),  allLandVillOpts, 'tahsil',   '',         '');
+    });
+    document.getElementById('land_DictrictId')?.addEventListener('change', function () {
+        filterSelect(document.getElementById('land_TahsilId'),  allLandTahsOpts, 'district', this.value, '');
+        filterSelect(document.getElementById('land_VillageId'), allLandVillOpts, 'tahsil',   '',         '');
+    });
+    document.getElementById('land_TahsilId')?.addEventListener('change', function () {
+        filterSelect(document.getElementById('land_VillageId'), allLandVillOpts, 'tahsil', this.value, '');
+    });
+
+    // ── Load land entries ─────────────────────────────────────
+    let currentFid = null;
+
+    function loadLandEntries(fid, tableBodyId) {
+        const tbody = document.getElementById(tableBodyId);
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-2"><i class="ri-loader-4-line me-1"></i>Loading…</td></tr>';
+
+        fetch(`/master/farmers/${fid}/land`, {
+            headers: { 'Accept': 'application/json',
+                       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (tableBodyId === 'landTableBody') {
+                document.getElementById('landCount').textContent = data.length;
+            }
+            if (!data.length) {
+                const cols = tableBodyId === 'landTableBody' ? 9 : 8;
+                tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center text-muted py-3">No land entries yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map((l, i) => `
+                <tr>
+                    <td class="text-muted">${i+1}</td>
+                    <td>${l.state   || '-'}</td>
+                    <td>${l.district|| '-'}</td>
+                    <td>${l.tahsil  || '-'}</td>
+                    <td>${l.village || '-'}</td>
+                    <td><strong>${l.land_area || '-'}</strong></td>
+                    <td>${l.khasra_no || '-'}</td>
+                    <td>${l.plot_no   || '-'}</td>
+                    ${tableBodyId === 'landTableBody'
+                        ? `<td><button class="btn btn-sm btn-outline-danger deleteLandBtn" data-id="${l.flandid}" title="Delete"><i class="ri-delete-bin-line"></i></button></td>`
+                        : ''}
+                </tr>`).join('');
+
+            // Bind delete buttons
+            if (tableBodyId === 'landTableBody') {
+                tbody.querySelectorAll('.deleteLandBtn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        if (!confirm('Delete this land entry?')) return;
+                        const id = this.dataset.id;
+                        fetch(`/master/farmers/land/${id}`, {
+                            method : 'DELETE',
+                            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                       'Accept': 'application/json' }
+                        })
+                        .then(r => r.json())
+                        .then(() => loadLandEntries(currentFid, 'landTableBody'))
+                        .catch(() => alert('Delete failed.'));
+                    });
+                });
+            }
+        })
+        .catch(() => {
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger py-2">Failed to load.</td></tr>';
+        });
+    }
+
+    // ── Add land entry ────────────────────────────────────────
+    document.getElementById('addLandEntryBtn')?.addEventListener('click', function () {
+        const saveMsg = document.getElementById('landSaveMsg');
+        const errMsg  = document.getElementById('landErrMsg');
+        saveMsg.style.display = 'none';
+        errMsg.style.display  = 'none';
+
+        const payload = {
+            StateId    : document.getElementById('land_StateId').value,
+            DictrictId : document.getElementById('land_DictrictId').value,
+            TahsilId   : document.getElementById('land_TahsilId').value,
+            VillageId  : document.getElementById('land_VillageId').value,
+            land_area  : document.getElementById('land_area').value,
+            khasra_no  : document.getElementById('land_khasra_no').value,
+            plot_no    : document.getElementById('land_plot_no').value,
+            _token     : document.querySelector('meta[name="csrf-token"]').content,
+        };
+
+        // Client-side validation
+        if (!payload.StateId || !payload.DictrictId || !payload.TahsilId ||
+            !payload.VillageId || !payload.land_area || !payload.khasra_no) {
+            errMsg.textContent = 'Please fill all required fields (State, District, Tahsil, Village, Area, Khasra No).';
+            errMsg.style.display = 'inline';
+            return;
+        }
+
+        this.disabled = true;
+        this.innerHTML = '<i class="ri-loader-4-line me-1"></i>Saving…';
+
+        fetch(`/master/farmers/${currentFid}/land`, {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json',
+                       'X-CSRF-TOKEN': payload._token,
+                       'Accept'      : 'application/json' },
+            body   : JSON.stringify(payload),
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                // Reset land form
+                document.getElementById('land_StateId').value    = '';
+                document.getElementById('land_DictrictId').value = '';
+                document.getElementById('land_TahsilId').value   = '';
+                document.getElementById('land_VillageId').value  = '';
+                document.getElementById('land_area').value       = '';
+                document.getElementById('land_khasra_no').value  = '';
+                document.getElementById('land_plot_no').value    = '';
+                filterSelect(document.getElementById('land_DictrictId'), allLandDistOpts, 'state',    '', '');
+                filterSelect(document.getElementById('land_TahsilId'),   allLandTahsOpts, 'district', '', '');
+                filterSelect(document.getElementById('land_VillageId'),  allLandVillOpts, 'tahsil',   '', '');
+
+                saveMsg.style.display = 'inline';
+                setTimeout(() => saveMsg.style.display = 'none', 3000);
+                loadLandEntries(currentFid, 'landTableBody');
+            } else {
+                errMsg.textContent = res.message || 'Save failed.';
+                errMsg.style.display = 'inline';
+            }
+        })
+        .catch(() => {
+            errMsg.textContent = 'Server error. Please try again.';
+            errMsg.style.display = 'inline';
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.innerHTML = '<i class="ri-add-line me-1"></i>Add Entry';
+        });
     });
 
     function resetToFirstTab() {
@@ -640,6 +955,15 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('#viewFarmerModal .tab-pane').forEach(p => p.classList.remove('show','active'));
             document.getElementById('vf_basic')?.classList.add('show','active');
 
+            // Load land entries for view modal when land tab clicked
+            const viewLandTabBtn = document.querySelector('[data-bs-target="#vf_land"]');
+            if (viewLandTabBtn) {
+                viewLandTabBtn._viewFid = d.id;
+                viewLandTabBtn.addEventListener('shown.bs.tab', function () {
+                    loadLandEntries(this._viewFid, 'viewLandTableBody');
+                }, { once: false });
+            }
+
             bootstrap.Modal.getOrCreateInstance(document.getElementById('viewFarmerModal')).show();
         });
     });
@@ -654,11 +978,18 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('farmerModalLabel').innerHTML = '<i class="ri-edit-line me-1"></i>Edit Farmer';
             document.getElementById('farmerSubmitBtn').innerHTML  = '<i class="ri-save-line me-1"></i>Update Farmer';
 
+            // ── Land tab: show edit section, load entries ─────────
+            currentFid = d.id;
+            document.getElementById('landEditSection').classList.remove('d-none');
+            document.getElementById('landNewSection').classList.add('d-none');
+            loadLandEntries(currentFid, 'landTableBody');
+
             // Basic
             setVal(form, 'tem_fid',       d.tem_fid);
             setVal(form, 'fname',          d.fname);
             setVal(form, 'father_name',    d.father_name);
             setVal(form, 'father_contact', d.father_contact);
+            setVal(form, 'oid',             d.oid);
             setVal(form, 'dob',            d.dob);
             setVal(form, 'age',            d.age);
             setVal(form, 'contact_1',      d.contact_1);

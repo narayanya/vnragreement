@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Block;
 use App\Models\City;
 use App\Models\Country;
-use App\Models\District;
-use App\Models\State;
+use App\Models\CoreDistrict;
+use App\Models\CoreState;
 use Illuminate\Http\Request;
 
 class CoreLocationController extends Controller
@@ -22,8 +22,8 @@ class CoreLocationController extends Controller
         // ── Counts for tab badges ────────────────────────────────
         $counts = [
             'countries' => Country::count(),
-            'states'    => State::count(),
-            'districts' => District::count(),
+            'states'    => CoreState::count(),
+            'districts' => CoreDistrict::count(),
             'blocks'    => Block::count(),
             'cities'    => City::count(),
         ];
@@ -34,7 +34,7 @@ class CoreLocationController extends Controller
         switch ($tab) {
 
             case 'states':
-                $q = State::with('country');
+                $q = CoreState::with('country');
                 if ($search) $q->where('state_name', 'like', "%{$search}%")
                                ->orWhere('state_code', 'like', "%{$search}%");
                 if ($status !== '') $q->where('is_active', $status);
@@ -42,7 +42,7 @@ class CoreLocationController extends Controller
                 break;
 
             case 'districts':
-                $q = District::with('state');
+                $q = CoreDistrict::with('state');
                 if ($search) $q->where('district_name', 'like', "%{$search}%")
                                ->orWhere('district_code', 'like', "%{$search}%");
                 if ($status !== '') $q->where('is_active', $status);
@@ -81,8 +81,8 @@ class CoreLocationController extends Controller
 
         // ── Dropdowns for Add modal ──────────────────────────────
         $allCountries = Country::orderBy('country_name')->get(['id', 'country_name']);
-        $allStates    = State::orderBy('state_name')->get(['id', 'state_name', 'country_id']);
-        $allDistricts = District::orderBy('district_name')->get(['id', 'district_name', 'state_id']);
+        $allStates    = CoreState::orderBy('state_name')->get(['id', 'state_name', 'country_id']);
+        $allDistricts = CoreDistrict::orderBy('district_name')->get(['id', 'district_name', 'state_id']);
         $allBlocks    = Block::orderBy('block_name')->get(['id', 'block_name', 'district_id']);
 
         return view('core.location.index', compact(

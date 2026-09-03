@@ -64,10 +64,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/master/employees', [EmployeeController::class, 'index'])->name('master.employees.index');
 
     // Farmers (Farmers)
-    Route::get('/master/farmers',          [FormarController::class, 'index'])->name('master.farmers.index');
-    Route::post('/master/farmers',         [FormarController::class, 'store'])->name('master.farmers.store');
-    Route::patch('/master/farmers/{id}',   [FormarController::class, 'update'])->name('master.farmers.update');
-    Route::delete('/master/farmers/{id}',  [FormarController::class, 'destroy'])->name('master.farmers.destroy');
+    Route::get('/master/farmers',                       [FormarController::class, 'index'])->name('master.farmers.index');
+    Route::post('/master/farmers',                      [FormarController::class, 'store'])->name('master.farmers.store');
+    Route::patch('/master/farmers/{id}',                [FormarController::class, 'update'])->name('master.farmers.update');
+    Route::delete('/master/farmers/{id}',               [FormarController::class, 'destroy'])->name('master.farmers.destroy');
+
+    // Farmer Land Details
+    Route::get('/master/farmers/{fid}/land',            [FormarController::class, 'landIndex'])->name('master.farmers.land.index');
+    Route::post('/master/farmers/{fid}/land',           [FormarController::class, 'landStore'])->name('master.farmers.land.store');
+    Route::delete('/master/farmers/land/{flandid}',     [FormarController::class, 'landDestroy'])->name('master.farmers.land.destroy');
 
     // Organiser
     Route::get('/master/organiser',         [OrganiserController::class, 'index'])->name('master.organiser.index');
