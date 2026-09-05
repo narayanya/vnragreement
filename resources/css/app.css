@@ -226,7 +226,7 @@
 	.brand-mark small { margin-top: 3px; color: #8fa4c5; font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; }
 	.sidebar-nav__label { margin: 57px 13px 15px; color: #7187aa; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
 	.sidebar-nav__links { display: grid; gap: 7px; }
-	.dashboard-nav-link { display: flex; align-items: center; gap: 13px; padding: 12px 13px; border-radius: 8px; color: #aebdd4; font-size: 13px; text-decoration: none; }
+	.dashboard-nav-link { display: flex; align-items: center; gap: 13px; padding: 7px 13px; border-radius: 8px; color: #aebdd4; font-size: 13px; text-decoration: none; }
 	.dashboard-nav-link:hover, .dashboard-nav-link.is-active { background: #29466e; color: #fff; }
 	button.dashboard-nav-link { width: 100%; border: 0; cursor: pointer; text-align: left; }
 	.master-nav-link { position: relative; }

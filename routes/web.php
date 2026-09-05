@@ -14,6 +14,8 @@ use App\Http\Controllers\SeasonController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\OldLocationController;
+use App\Http\Controllers\FarmerAgreementController;
+use App\Http\Controllers\OrganiserAgreementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +36,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/master/crop/{id}', [CropController::class, 'show'])->name('crops.show');
     Route::patch('/master/crop/{id}', [CropController::class, 'update'])->name('crops.update');
     Route::delete('/master/crop/{id}', [CropController::class, 'destroy'])->name('crops.destroy');
+
+    // Farmer Agreements
+    Route::get('/agreements/farmer',         [FarmerAgreementController::class, 'index'])->name('farmer-agreements.index');
+    Route::get('/agreements/farmer/create',  [FarmerAgreementController::class, 'create'])->name('farmer-agreements.create');
+    Route::post('/agreements/farmer',        [FarmerAgreementController::class, 'store'])->name('farmer-agreements.store');
+    Route::get('/agreements/farmer/{id}/edit', [FarmerAgreementController::class, 'edit'])->name('farmer-agreements.edit');
+    Route::patch('/agreements/farmer/{id}',  [FarmerAgreementController::class, 'update'])->name('farmer-agreements.update');
+    Route::delete('/agreements/farmer/{id}', [FarmerAgreementController::class, 'destroy'])->name('farmer-agreements.destroy');
+
+    // Organiser Agreements
+    Route::get('/agreements/organiser',               [OrganiserAgreementController::class, 'index'])->name('organiser-agreements.index');
+    Route::get('/agreements/organiser/create',        [OrganiserAgreementController::class, 'create'])->name('organiser-agreements.create');
+    Route::post('/agreements/organiser',              [OrganiserAgreementController::class, 'store'])->name('organiser-agreements.store');
+    Route::get('/agreements/organiser/{id}',          [OrganiserAgreementController::class, 'show'])->name('organiser-agreements.show');
+    Route::get('/agreements/organiser/{id}/edit',     [OrganiserAgreementController::class, 'edit'])->name('organiser-agreements.edit');
+    Route::patch('/agreements/organiser/{id}',        [OrganiserAgreementController::class, 'update'])->name('organiser-agreements.update');
+    Route::delete('/agreements/organiser/{id}',       [OrganiserAgreementController::class, 'destroy'])->name('organiser-agreements.destroy');
 
     // Vertical (Crop Types - Synced Data)
     Route::get('/master/vertical', [VerticalController::class, 'index'])->name('master.vertical.index');
